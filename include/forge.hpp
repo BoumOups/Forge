@@ -2,33 +2,26 @@
 
 #include <string>
 #include <vector>
-#include <filesystem>
 
 namespace forge {
-    struct Step {
-      std::string name;
-      std::string command;
-
-      std::vector<std::filesystem::path> inputs;
-      std::vector<std::filesystem::path> outputs;
-
-      std::string hash_key;
-    };
-
     struct Target {
         std::string name;
-        enum class Type { Executable, StaticLib, SharedLib };
+        std::string output_type;
 
-        std::vector<std::filesystem::path> sources;
-
-        std::vector<std::string> compile_flags;
-        std::vector<std::string> link_flags;
-
-        std::vector<Target*> dependencies;
+        std::vector<std::string> sources;
+        std::vector<std::string> flags;
     };
 
-    struct BuildGraph {
-        std::vector<Target> targets;
-        std::vector<Step> plan;
+    class Project {
+        public:
+            void add_executable(std::string name, std::vector<std::string> sources, std::vector<std::string> flags = { "-std=c++23", "-O2"}) {
+                auto target = Target{name, "exe", sources, flags};
+                targets.push_back(target);
+            }
+            const std::vector<Target>& get_targets() const { return targets; };
+        private:
+            std::vector<Target> targets;
     };
+
+    extern void build(Project& pkg);
 }
