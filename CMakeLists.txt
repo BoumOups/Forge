@@ -7,9 +7,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project("Forge" CXX)
 
+find_package("OpenSSL" REQUIRED)
+
 set("SOURCES"
     "src/main.cpp"
 )
 add_executable("forge" ${SOURCES})
 
 target_include_directories("forge" PRIVATE "include")
+target_link_libraries("forge" PRIVATE OpenSSL::Crypto)
