@@ -1,5 +1,6 @@
 #include "cache/hasher.hpp"
 #include "forge.hpp"
+#include "manifest.hpp"
 #include "scheduler/executor.hpp"
 
 #include <cstddef>
@@ -65,14 +66,22 @@ int main(int argc, char* argv[]) {
         std::vector<std::string> objects;
 
         for (const auto& target : project.get_targets()) {
+            auto manifest = forge::Manifest::load();
+            bool need_linking = false;
+
             for (const auto& src : target.sources) {
                 std::filesystem::path src_path(src);
                 std::filesystem::path object_path = std::filesystem::path("bin") / src_path.filename().replace_extension(".o");
 
                 std::string current_hash = forge::Hasher::hash_file(src, target.flags[0]);
-                if (!std::filesystem::exists(object_path)) {
-                    std::string command = std::format("clang++ {} -c {} -o {}", target.flags[0], src, object_path.string());
+                if (manifest[src] != current_hash) {
+                    std::string command = std::format("clang++ {} -c {} -o {}", target.flags_str(), src, object_path.string());
                     compile_commands.push_back(command);
+
+                    manifest[src] = current_hash;
+                    need_linking = true;
+                }else {
+                    std::print("  ⏭️  Skipping {} (No changes)\n", src);
                 }
 
                 objects.push_back(object_path.string());
@@ -83,7 +92,9 @@ int main(int argc, char* argv[]) {
                 return EXIT_FAILURE;
             }
 
-            if (!objects.empty()) {
+            if (!objects.empty() && need_linking) {
+                forge::Manifest::save(manifest);
+
                 std::string objects_str = join_objects(objects);
                 std::string bin_path = (std::filesystem::path("bin") / target.name).string();
 
@@ -95,6 +106,8 @@ int main(int argc, char* argv[]) {
                     std::print("❌ Linking failed for {}\n", target.name);
                     return EXIT_FAILURE;
                 }
+            }else {
+                std::print("✨ Project is up to date.\n");
             }
 
             std::print("\n✨ Build Successful\n");

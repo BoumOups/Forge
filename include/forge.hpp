@@ -10,6 +10,16 @@ namespace forge {
 
         std::vector<std::string> sources;
         std::vector<std::string> flags;
+
+        std::string flags_str() const {
+            std:: string str;
+            for (const auto& flag : flags) {
+                str += flag;
+                str += " ";
+            }
+
+            return str;
+        }
     };
 
     class Project {

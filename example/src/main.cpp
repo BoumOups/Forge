@@ -2,6 +2,6 @@
 #include <print>
 
 int main() {
-    std::print("Hello from the demo");
+    std::print("Hello from the test");
     return EXIT_SUCCESS;
 }

@@ -1,0 +1,21 @@
+#pragma once
+
+#include "json.hpp"
+#include <fstream>
+
+namespace forge {
+    class Manifest {
+        public:
+        static nlohmann::json load() {
+            std::ifstream file("build/manifest.json");
+            if (!file.is_open()) return nlohmann::json::object();
+
+            return nlohmann::json::parse(file);
+        }
+
+        static void save(const nlohmann::json& data) {
+            std::ofstream file("build/manifest.json");
+            file << data.dump();
+        }
+    };
+}
