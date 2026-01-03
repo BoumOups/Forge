@@ -15,6 +15,26 @@
 
 bool load_and_run_script(forge::Project& project);
 
+bool compile_build_script() {
+    // Determine the compiler path (adjust for your machine)
+    std::string clang_path = "/opt/homebrew/opt/llvm/bin/clang++";
+
+    // The command to produce a "Reactor" style Wasm module
+    std::string cmd = std::format(
+        "{} --target=wasm32-wasi "
+        "-O3 -nostdlib "
+        "-I./include "
+        "-Wl,--no-entry -Wl,--export-all -Wl,--allow-undefined "
+        "build.cpp -o build.wasm",
+        clang_path
+    );
+
+    std::print("   [CMD] {}\n", cmd);
+
+    int result = std::system(cmd.c_str());
+    return result == 0;
+}
+
 void ensure_directories() {
     if (!std::filesystem::exists("bin")) {
         std::filesystem::create_directory("bin");
@@ -56,6 +76,11 @@ int main(int argc, char* argv[]) {
     if (command == "build" || command == "run") {
         std::print("🛠️  Starting build...\n");
         ensure_directories();
+
+        if (!compile_build_script()) {
+            std::print("❌ Failed to compile build.cpp\n");
+            return EXIT_FAILURE;
+        }
 
         if (!load_and_run_script(project)) {
             std::print("❌ Failed to load build script.\n");

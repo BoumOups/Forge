@@ -1,6 +1,42 @@
 #pragma once
 
+#ifdef __wasm__
+
+#include <vector>
 #include <string>
+
+extern "C" {
+    void forge_host_add_executable(const char* name, size_t len, const void* sources_ptr, size_t source_count);
+}
+
+struct WasmString {
+    const char* ptr;
+    size_t len;
+};
+
+namespace forge {
+    class Project {
+    public:
+        void add_executable(std::string name) {
+            std::vector<WasmString> descriptor;
+            for (const auto& source : sources) (
+                descriptor.push_back({source.c_str, source.lenght()});
+            )
+            forge_host_add_executable(name.c_str(), name.length(), descriptor.data(), descriptor.size());
+        }
+    };
+}
+
+#define FORGE_MAIN() \
+    extern "C" int main() { \
+        forge::Project pkg; \
+        forge_build(pkg); \
+        return 0; \
+    } \
+    void forge_build(forge::Project& pkg)
+
+#else
+
 #include <vector>
 
 namespace forge {
@@ -36,5 +72,11 @@ namespace forge {
     extern "C" {
         void build(forge::Project* pkg);
     }
-    extern void build(Project& pkg);
+
+    #define FORGE_MAIN() \
+            void forge_build(forge::Project& pkg); \
+            int main() { return 0; } \
+            void forge_build(forge::Project& pkg)
 }
+
+#endif

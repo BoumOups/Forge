@@ -2,6 +2,6 @@
 #include <print>
 
 int main() {
-    std::print("Hello from the test");
+    std::print("Hello from the Gabriel");
     return EXIT_SUCCESS;
 }
