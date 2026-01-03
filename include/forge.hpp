@@ -23,5 +23,8 @@ namespace forge {
             std::vector<Target> targets;
     };
 
+    extern "C" {
+        void build(forge::Project* pkg);
+    }
     extern void build(Project& pkg);
 }

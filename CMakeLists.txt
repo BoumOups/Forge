@@ -9,8 +9,11 @@ project("Forge" CXX)
 
 find_package("OpenSSL" REQUIRED)
 
+add_compile_options("-rdynamic")
+
 set("SOURCES"
     "src/main.cpp"
+    "src/loader.cpp"
 )
 add_executable("forge" ${SOURCES})
 
