@@ -34,7 +34,7 @@ target_include_directories("forge" PRIVATE
 target_link_libraries("forge" PRIVATE OpenSSL::Crypto ${WASMTIME_LIB})
 
 add_custom_command(TARGET forge POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${WASMTIME_C_DIR}/lib/libwasmtime.dylib"
     "$<TARGET_FILE_DIR:forge>/libwasmtime.dylib"
 )
