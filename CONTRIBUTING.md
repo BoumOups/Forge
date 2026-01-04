@@ -14,7 +14,8 @@ By contributing to Forge, you agree that your contributions will be licensed und
 Since we are in early development, bugs are expected. Please open an issue with:
 * Your macOS version.
 * Your compiler version (`clang --version`).
-* A minimal `forge.cpp` example that triggers the bug.
+* How to reproduce the bug.
+* Plus provide any valuable informations
 
 ### 2. Feature Ideas
 Want to add support for a specific package manager or compiler flag abstraction? Open an issue to discuss the design. We aim for a "C++-first" approach where the build logic is as readable as the source code.
@@ -37,3 +38,8 @@ Since Forge is a build system for C++, you will need `clang` (via Xcode Command 
    git clone [https://github.com/BoumOups/Forge.git](https://github.com/BoumOups/Forge.git)
    cd Forge
     cmake --build build
+
+2. **Test the build:**
+  ```bash
+  cd example
+  ../build/forge build
