@@ -3,7 +3,6 @@
 #include <wasmtime.h>
 #include <wasmtime.hh>
 
-#include <dlfcn.h>
 #include <fstream>
 #include <ios>
 #include <print>
@@ -31,7 +30,6 @@ bool forge::loader::load_and_run_wasm_script(forge::Project& project) {
 
     std::filesystem::path wasm_path = std::filesystem::current_path() / "build.wasm";
 
-    // Read the file bytes
     std::ifstream file(wasm_path, std::ios::binary);
     if (!file.is_open()) {
         std::print("❌ Error: Could not open {}\n", wasm_path.string());
@@ -105,32 +103,5 @@ bool forge::loader::load_and_run_wasm_script(forge::Project& project) {
         }
     }
 
-    return true;
-}
-
-typedef void (*build_t)(forge::Project*);
-
-bool load_and_run_script(forge::Project& pkg) {
-    std::string compile_cmd = "clang++ -std=c++23 -dynamiclib example/build.cpp "
-                                  "-I./include -o bin/build.dylib "
-                                  "-undefined dynamic_lookup";
-
-    if (std::system(compile_cmd.c_str()) != 0) {
-        std::print("❌ Failed to compile build.cpp\n");
-        return false;
-    }
-
-    void* handle = dlopen("bin/build.dylib", RTLD_NOW);
-    if (!handle) {
-        std::print("❌ dlsym error: {}\n", dlerror());
-        dlclose(handle);
-        return false;
-    }
-
-    if (auto entry = reinterpret_cast<build_t>(dlsym(handle, "build"))) {
-        entry(&pkg);
-    }
-
-    dlclose(handle);
     return true;
 }

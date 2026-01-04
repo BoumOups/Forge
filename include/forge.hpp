@@ -2,9 +2,8 @@
 
 #ifdef __wasm__
 
-#include <cstdint>
-#include <string>
-#include <vector>
+#include <stddef.h>
+#include <stdint.h>
 
 extern "C" {
     void forge_host_add_executable(const char* name, size_t len, const void* sources_ptr, size_t source_count);
@@ -17,16 +16,29 @@ struct WasmString {
 };
 
 namespace forge {
+    inline size_t str_len(const char* str) {
+        size_t len = 0;
+        while (str[len]) len++;
+        return len;
+    }
+
     class Project {
     public:
-        enum class OS = { Unknown = 0, OSX = 1, Linux = 2, Windows = 3};
+        enum class OS { Unknown = 0, OSX = 1, Linux = 2, Windows = 3};
 
-        void add_executable(std::string name) {
-            std::vector<WasmString> descriptor;
-            for (const auto& source : sources) (
-                descriptor.push_back({source.c_str, source.lenght()});
-            )
-            forge_host_add_executable(name.c_str(), name.length(), descriptor.data(), descriptor.size());
+        template<typename... Args>
+        void add_executable(const char* name, Args... sources) {
+            constexpr size_t count = sizeof...(Args);
+            if constexpr (count > 0) {
+                const char* src_arr[] = { sources... };
+                WasmString descriptor[count];
+                for (size_t i = 0; i < count; ++i) {
+                    descriptor[i] = {src_arr[i], str_len(src_arr[i])};
+                }
+                forge_host_add_executable(name, str_len(name), descriptor, count);
+            } else {
+                forge_host_add_executable(name, str_len(name), nullptr, 0);
+            }
         }
 
         inline OS get_os() {
@@ -36,6 +48,7 @@ namespace forge {
 }
 
 #define FORGE_MAIN() \
+    void forge_build(forge::Project& pkg); \
     extern "C" int main() { \
         forge::Project pkg; \
         forge_build(pkg); \
@@ -45,6 +58,7 @@ namespace forge {
 
 #else
 
+#include <string>
 #include <vector>
 
 namespace forge {
@@ -68,9 +82,13 @@ namespace forge {
 
     class Project {
         public:
-            void add_executable(std::string name, std::vector<std::string> sources, std::vector<std::string> flags = { "-std=c++23", "-O2"}) {
-                auto target = Target{name, "exe", sources, flags};
-                targets.push_back(target);
+            void add_executable(std::string name, std::vector<std::string> sources) {
+                targets.push_back(Target{name, "exe", sources, { "-std=c++23", "-O2"}});
+            }
+
+            template<typename... Args>
+            void add_executable(std::string name, Args... sources) {
+                add_executable(name, std::vector<std::string>{std::string(sources)...});
             }
             const std::vector<Target>& get_targets() const { return targets; };
         private:
@@ -83,6 +101,11 @@ namespace forge {
 
     #define FORGE_MAIN() \
             void forge_build(forge::Project& pkg); \
+            namespace forge { \
+                extern "C" void build(forge::Project* pkg) { \
+                    ::forge_build(*pkg); \
+                } \
+            } \
             int main() { return 0; } \
             void forge_build(forge::Project& pkg)
 }

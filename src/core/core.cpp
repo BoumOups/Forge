@@ -13,7 +13,7 @@
 #include "scheduler/executor.hpp"
 
 bool forge::Builder::compile_build_script() {
-  std::string clang_path = "/opt/homebrew/Cellar/llvm@20/20.1.8/bin/clang++";
+  std::filesystem::path clang_path = std::filesystem::current_path() / "../vendor/wasi-sdk/bin/clang++";
 
   std::filesystem::path script_path = std::filesystem::current_path() / "build.cpp";
   std::filesystem::path output_path = std::filesystem::current_path() / "build.wasm";
@@ -29,7 +29,7 @@ bool forge::Builder::compile_build_script() {
       "-I./include "
       "-Wl,--no-entry -Wl,--export-all -Wl,--allow-undefined "
       "{} -o {}",
-      clang_path,
+      clang_path.string(),
       script_path.string(),
       output_path.string()
   );
