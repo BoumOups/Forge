@@ -75,8 +75,8 @@ bool forge::Builder::compile_project(Project &project) {
           forge::Hasher::hash_file(src, target.flags_str());
       if (manifest[src] != current_hash) {
         std::string compile_cmd =
-            std::format("clang++ {} -c {} -o {}", target.flags_str(), src,
-                        object_path.string());
+            std::format("{} {} -c {} -o {}", forge::utils::get_compiler(),
+                        target.flags_str(), src, object_path.string());
         compile_commands.push_back(compile_cmd);
 
         manifest[src] = current_hash;
@@ -98,8 +98,8 @@ bool forge::Builder::compile_project(Project &project) {
         std::string bin_path =
             (std::filesystem::path("bin") / target.name).string();
 
-        std::string linker_command =
-            std::format("clang++ {} -o {}", objects_str, bin_path);
+        std::string linker_command = std::format(
+            "{} {} -o {}", forge::utils::get_compiler(), objects_str, bin_path);
         std::print(" 🔗[LINK] {}\n", target.name);
 
         int result = std::system(linker_command.c_str());
