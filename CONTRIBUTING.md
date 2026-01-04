@@ -34,12 +34,34 @@ Want to add support for a specific package manager or compiler flag abstraction?
 Since Forge is a build system for C++, you will need `clang` (via Xcode Command Line Tools) installed.
 
 1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/BoumOups/Forge.git](https://github.com/BoumOups/Forge.git)
-   cd Forge
+    ```bash
+    git clone [https://github.com/BoumOups/Forge.git](https://github.com/BoumOups/Forge.git)
+    cd Forge
     cmake --build build
 
 2. **Test the build:**
+    ```bash
+    cd example
+    ../build/forge build
+
+3. **Adding features**
+  First create your own branch name feature/<the feature you want to implement>
   ```bash
-  cd example
-  ../build/forge build
+    git checkout -b feature/<the incredible feature>
+  ```
+  
+  After you've changes create a commit with an complete descrition of what you have implemented
+  ```bash
+    git commit -m "Amazing description"
+  ```
+  
+  Then push this beautifull feature on tour fork of the repo
+  ```bash
+    git push -u origine <branch_name>
+  ```
+  
+  Finally you can make a pull request that explain all your certainly good changes, and voila !
+  
+##❤️ Thank you for contributing to Forge !##
+
+I wanted to thanks you for contributing to this project because this tell that Forge is not just my project but also yours 😁 !
