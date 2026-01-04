@@ -2,6 +2,6 @@
 #include <print>
 
 int main() {
-    std::print("Hello from the Gabriel");
-    return EXIT_SUCCESS;
+  std::print("Hello from the best of the worth of the worth");
+  return EXIT_SUCCESS;
 }

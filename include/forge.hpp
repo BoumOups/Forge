@@ -9,6 +9,8 @@ extern "C" {
 void forge_host_add_executable(const char *name, size_t len,
                                const void *sources_ptr, size_t source_count);
 int32_t forge_host_get_os();
+
+void forge_host_set_compiler(int32_t compiler);
 }
 
 struct WasmString {
@@ -17,6 +19,10 @@ struct WasmString {
 };
 
 namespace forge {
+
+enum class Compiler { Clang = 0, GCC = 1, CL = 2, MSVC = 3 };
+enum class OS { Unknown = 0, OSX = 1, Linux = 2, Windows = 3 };
+
 inline size_t str_len(const char *str) {
   size_t len = 0;
   while (str[len])
@@ -26,8 +32,6 @@ inline size_t str_len(const char *str) {
 
 class Project {
 public:
-  enum class OS { Unknown = 0, OSX = 1, Linux = 2, Windows = 3 };
-
   template <typename... Args>
   void add_executable(const char *name, Args... sources) {
     constexpr size_t count = sizeof...(Args);
@@ -44,6 +48,10 @@ public:
   }
 
   inline OS get_os() { return static_cast<OS>(forge_host_get_os()); }
+
+  inline void set_compiler(Compiler compiler) {
+    forge_host_set_compiler(static_cast<int32_t>(compiler));
+  }
 };
 } // namespace forge
 
@@ -61,6 +69,9 @@ public:
 #include <vector>
 
 namespace forge {
+
+enum class Compiler { Clang = 0, GCC = 1, CL = 2, MSVC = 3 };
+
 struct Target {
   std::string name;
   std::string output_type;
@@ -89,10 +100,15 @@ public:
   void add_executable(std::string name, Args... sources) {
     add_executable(name, std::vector<std::string>{std::string(sources)...});
   }
-  const std::vector<Target> &get_targets() const { return targets; };
+
+  void set_compiler(Compiler compiler) { this->compiler = compiler; }
+
+  const std::vector<Target> &get_targets() const { return targets; }
+  const Compiler &get_compiler() const { return compiler; }
 
 private:
   std::vector<Target> targets;
+  Compiler compiler = Compiler::Clang;
 };
 
 extern "C" {
