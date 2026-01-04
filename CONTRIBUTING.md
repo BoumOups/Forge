@@ -77,6 +77,6 @@ Want to add support for a specific package manager or compiler flag abstraction?
 
   Finally you can make a pull request that explain all your certainly good changes, and voila !
 
-###❤️ Thank you for contributing to Forge !
+## ❤️ Thank you for contributing to Forge !
 
 I wanted to thanks you for contributing to this project because this tell that Forge is not just my project but also yours 😁 !
