@@ -2,6 +2,8 @@
 
 **Forge** is a modern C++ build system that allows you to write your build scripts in C++. It leverages WebAssembly (WASM) to execute build logic securely and portably.
 
+**Important**: This project is in its early stages and is not yet ready for production use, and is also only usable on MacOS and will be soon available on Linux and Windows.
+
 ## Features
 
 - **C++ Build Scripts**: Write your build configuration in C++23.
