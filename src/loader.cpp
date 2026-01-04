@@ -22,12 +22,21 @@ std::vector<uint8_t> read_file(const std::string& path) {
     return buffer;
 }
 
-bool load_and_run_wasm_script(forge::Project& project, const std::string& wasm_path) {
+bool load_and_run_wasm_script(forge::Project& project) {
     wasmtime::Engine engine;
     wasmtime::Store store(engine);
     wasmtime::Linker linker(engine);
 
-    auto wasm_bytes = read_file(wasm_path);
+    std::filesystem::path wasm_path = std::filesystem::current_path() / "build.wasm";
+
+    // Read the file bytes
+    std::ifstream file(wasm_path, std::ios::binary);
+    if (!file.is_open()) {
+        std::print("❌ Error: Could not open {}\n", wasm_path.string());
+        return false;
+    }
+
+    std::vector<uint8_t> wasm_bytes((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     auto module_result = wasmtime::Module::compile(engine, wasm_bytes);
 
     if (!module_result) {
@@ -63,6 +72,18 @@ bool load_and_run_wasm_script(forge::Project& project, const std::string& wasm_p
         }
     ).unwrap();
 
+    linker.func_wrap("env", "forge_host_get_os", []() {
+        #if defined(__APPLE__)
+            return 1;
+        #elif defined(__linux__)
+            return 2;
+        #elif defined(_WIN32)
+            return 3;
+        #else
+            return 0;
+        #endif
+    }).unwrap();
+
     auto instance_result = linker.instantiate(store, module);
     if (!instance_result) {
         std::print("❌ Instantiation failed: {}\n", instance_result.err().message());
@@ -73,7 +94,13 @@ bool load_and_run_wasm_script(forge::Project& project, const std::string& wasm_p
     auto export_start = instance.get(store, "_start");
     if (export_start && std::holds_alternative<wasmtime::Func>(*export_start)) {
         auto& start_func = std::get<wasmtime::Func>(*export_start);
-        start_func.call(store, {}).unwrap();
+        auto start_result = start_func.call(store, {});
+        if (!start_result) {
+            auto err = start_result.err();
+            std::print("❌ Wasm Runtime Error: {}\n", err.message());
+
+            return false;
+        }
     }
 
     return true;

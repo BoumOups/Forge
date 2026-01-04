@@ -2,11 +2,13 @@
 
 #ifdef __wasm__
 
-#include <vector>
+#include <cstdint>
 #include <string>
+#include <vector>
 
 extern "C" {
     void forge_host_add_executable(const char* name, size_t len, const void* sources_ptr, size_t source_count);
+    int32_t forge_host_get_os();
 }
 
 struct WasmString {
@@ -17,12 +19,18 @@ struct WasmString {
 namespace forge {
     class Project {
     public:
+        enum class OS = { Unknown = 0, OSX = 1, Linux = 2, Windows = 3};
+
         void add_executable(std::string name) {
             std::vector<WasmString> descriptor;
             for (const auto& source : sources) (
                 descriptor.push_back({source.c_str, source.lenght()});
             )
             forge_host_add_executable(name.c_str(), name.length(), descriptor.data(), descriptor.size());
+        }
+
+        inline OS get_os() {
+            return static_cast<OS>(forge_host_get_os());
         }
     };
 }
