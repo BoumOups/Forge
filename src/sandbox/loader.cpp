@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+#include "sandbox/loader.h++"
+
 std::vector<uint8_t> read_file(const std::string& path) {
     std::ifstream file(path, std::ios::binary | std::ios::ate);
     std::streamsize size = file.tellg();
@@ -22,7 +24,7 @@ std::vector<uint8_t> read_file(const std::string& path) {
     return buffer;
 }
 
-bool load_and_run_wasm_script(forge::Project& project) {
+bool forge::loader::load_and_run_wasm_script(forge::Project& project) {
     wasmtime::Engine engine;
     wasmtime::Store store(engine);
     wasmtime::Linker linker(engine);

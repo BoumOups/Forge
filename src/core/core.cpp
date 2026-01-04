@@ -6,10 +6,11 @@
 #include <ostream>
 #include <set>
 
-#include "cache/manifest.hpp"
 #include "cache/hasher.hpp"
-#include "scheduler/executor.hpp"
+#include "cache/manifest.hpp"
 #include "forge.hpp"
+#include "sandbox/loader.h++"
+#include "scheduler/executor.hpp"
 
 bool forge::Builder::compile_build_script() {
   std::string clang_path = "/opt/homebrew/Cellar/llvm@20/20.1.8/bin/clang++";
@@ -116,6 +117,11 @@ bool forge::Builder::build_project() {
 
   if (!compile_build_script()) {
     std::println("Failed at compiling build script !");
+    return false;
+  }
+
+  if (!forge::loader::load_and_run_wasm_script(project)) {
+    std::println("Failed at loading and running wasm script !");
     return false;
   }
 
