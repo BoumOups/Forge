@@ -11,7 +11,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Create a `forge.cpp` with the following content: `...`
+1. Create a `build.cpp` with the following content: `...`
 2. Run command: `./forge build`
 3. See error: `...`
 
