@@ -16,17 +16,20 @@ find_library("WASMTIME_LIB" wasmtime HINTS "${WASMTIME_C_DIR}/lib")
 add_compile_options("-rdynamic")
 
 set("SOURCES"
-    "src/main.cpp"
-    "src/loader.cpp"
+        "src/main.cpp"
+        "src/sandbox/loader.cpp"
+        "src/cli/interface.cpp"
+        "src/core/core.cpp"
 )
 
 add_executable("forge" ${SOURCES})
 
 target_include_directories("forge" PRIVATE
-    "include"
-    "vendor"
-    "${WASMTIME_C_DIR}/include"
-    "${WASMTIME_CPP_DIR}/include"
+        "include"
+        "src"
+        "vendor"
+        "${WASMTIME_C_DIR}/include"
+        "${WASMTIME_CPP_DIR}/include"
 )
 target_link_libraries("forge" PRIVATE OpenSSL::Crypto ${WASMTIME_LIB})
 
