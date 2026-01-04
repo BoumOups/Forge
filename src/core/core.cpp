@@ -1,10 +1,9 @@
 #include "core.h++"
 
-#include <print>
-#include <string>
 #include <filesystem>
-#include <ostream>
+#include <print>
 #include <set>
+#include <string>
 
 #include "cache/hasher.hpp"
 #include "cache/manifest.hpp"
@@ -13,26 +12,27 @@
 #include "scheduler/executor.hpp"
 
 bool forge::Builder::compile_build_script() {
-  std::filesystem::path clang_path = std::filesystem::current_path() / "../vendor/wasi-sdk/bin/clang++";
+  std::filesystem::path clang_path =
+      std::filesystem::current_path() / "../vendor/wasi-sdk/bin/clang++";
 
-  std::filesystem::path script_path = std::filesystem::current_path() / "build.cpp";
-  std::filesystem::path output_path = std::filesystem::current_path() / "build.wasm";
+  std::filesystem::path script_path =
+      std::filesystem::current_path() / "build.cpp";
+  std::filesystem::path output_path =
+      std::filesystem::current_path() / "build.wasm";
 
   if (!std::filesystem::exists(script_path)) {
-    std::print("❌ Error: No 'build.cpp' found in {}\n", std::filesystem::current_path().string());
+    std::print("❌ Error: No 'build.cpp' found in {}\n",
+               std::filesystem::current_path().string());
     return false;
   }
 
-  std::string cmd = std::format(
-      "{} --target=wasm32-wasi "
-      "-O3 -nostdlib "
-      "-I./include "
-      "-Wl,--no-entry -Wl,--export-all -Wl,--allow-undefined "
-      "{} -o {}",
-      clang_path.string(),
-      script_path.string(),
-      output_path.string()
-  );
+  std::string cmd = std::format("{} --target=wasm32-wasi "
+                                "-O3 -nostdlib "
+                                "-I./include "
+                                "-Wl,--export-all -Wl,--allow-undefined "
+                                "{} -o {}",
+                                clang_path.string(), script_path.string(),
+                                output_path.string());
   std::print("[CMD] {}\n", cmd);
 
   int result = std::system(cmd.c_str());
@@ -40,14 +40,14 @@ bool forge::Builder::compile_build_script() {
 }
 
 bool forge::Builder::graph_validation(const Project &project) {
-  const auto& targets = project.get_targets();
+  const auto &targets = project.get_targets();
   if (targets.empty()) {
     std::print("❌ No targets found.\n");
     return false;
   }
 
   std::set<std::string> target_names;
-  for (const auto& target : targets) {
+  for (const auto &target : targets) {
     if (target_names.contains(target.name)) {
       std::print("❌ Duplicate target name: {}\n", target.name);
       return false;
@@ -57,28 +57,32 @@ bool forge::Builder::graph_validation(const Project &project) {
   return true;
 }
 
-bool forge::Builder::compile_project(Project& project) {
+bool forge::Builder::compile_project(Project &project) {
   std::vector<std::string> compile_commands;
   std::vector<std::string> object_file;
 
-  for (auto& target : project.get_targets()) {
+  for (auto &target : project.get_targets()) {
     auto manifest = forge::Manifest::load();
     bool need_linking = false;
 
-    for (auto& src : target.sources) {
+    for (auto &src : target.sources) {
       std::filesystem::path src_path(src);
-      std::filesystem::path object_path(std::filesystem::path("bin") / src_path.filename().replace_extension(".o"));
+      std::filesystem::path object_path(
+          std::filesystem::path("bin") /
+          src_path.filename().replace_extension(".o"));
 
-      std::string current_hash = forge::Hasher::hash_file(src, target.flags_str());
+      std::string current_hash =
+          forge::Hasher::hash_file(src, target.flags_str());
       if (manifest[src] != current_hash) {
-        std::string compile_cmd = std::format("clang++ {} -c {} -o {}", target.flags_str(), src, object_path.string());
+        std::string compile_cmd =
+            std::format("clang++ {} -c {} -o {}", target.flags_str(), src,
+                        object_path.string());
         compile_commands.push_back(compile_cmd);
 
         manifest[src] = current_hash;
         need_linking = true;
       } else {
         std::print("  ⏭️  Skipping {} (No changes)\n", src);
-
       }
       object_file.push_back(object_path.string());
 
@@ -91,9 +95,11 @@ bool forge::Builder::compile_project(Project& project) {
         forge::Manifest::save(manifest);
 
         std::string objects_str = forge::utils::join_objects(object_file);
-        std::string bin_path = (std::filesystem::path("bin") / target.name).string();
+        std::string bin_path =
+            (std::filesystem::path("bin") / target.name).string();
 
-        std::string linker_command = std::format("clang++ {} -o {}", objects_str, bin_path);
+        std::string linker_command =
+            std::format("clang++ {} -o {}", objects_str, bin_path);
         std::print(" 🔗[LINK] {}\n", target.name);
 
         int result = std::system(linker_command.c_str());
@@ -104,7 +110,6 @@ bool forge::Builder::compile_project(Project& project) {
       } else {
         std::print("✨ Project is up to date.\n");
       }
-
     }
   }
   return true;
@@ -116,17 +121,17 @@ bool forge::Builder::build_project() {
   forge::Project project;
 
   if (!compile_build_script()) {
-    std::println("Failed at compiling build script !");
+    std::print("❌ Failed at compiling build script !\n");
     return false;
   }
 
   if (!forge::loader::load_and_run_wasm_script(project)) {
-    std::println("Failed at loading and running wasm script !");
+    std::print("❌ Failed at loading and running wasm script !\n");
     return false;
   }
 
   if (!graph_validation(project)) {
-    std::println("Graph validation failed !");
+    std::print("❌ Graph validation failed !\n");
     return false;
   }
 
