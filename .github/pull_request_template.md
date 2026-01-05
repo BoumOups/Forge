@@ -1,5 +1,4 @@
-## 📝 Description
-Provide a brief summary of the changes introduced by this PR. 
+## 📝 Description Provide a brief summary of the changes introduced by this PR. 
 If it fixes an open issue, please link it here (e.g., "Closes #123").
 
 ## ✨ Type of Change
