@@ -11,6 +11,8 @@
 #include "sandbox/loader.h++"
 #include "scheduler/executor.hpp"
 
+const std::string OUTPUT_DIR = "forge-out";
+
 bool forge::Builder::compile_build_script() {
   std::filesystem::path clang_path =
       std::filesystem::current_path() / "../vendor/wasi-sdk/bin/clang++";
@@ -18,7 +20,7 @@ bool forge::Builder::compile_build_script() {
   std::filesystem::path script_path =
       std::filesystem::current_path() / "build.cpp";
   std::filesystem::path output_path =
-      std::filesystem::current_path() / "build.wasm";
+      std::filesystem::current_path() / OUTPUT_DIR / "build.wasm";
 
   if (!std::filesystem::exists(script_path)) {
     std::print("❌ Error: No 'build.cpp' found in {}\n",
@@ -74,7 +76,7 @@ bool forge::Builder::compile_project(Project &project) {
     for (auto &src : target.sources) {
       std::filesystem::path src_path(src);
       std::filesystem::path object_path(
-          std::filesystem::path("bin") /
+          std::filesystem::path(OUTPUT_DIR) /
           src_path.filename().replace_extension(".o"));
 
       std::string current_hash =
@@ -102,7 +104,7 @@ bool forge::Builder::compile_project(Project &project) {
 
         std::string objects_str = forge::utils::join_objects(object_file);
         std::string bin_path =
-            (std::filesystem::path("bin") / target.name).string();
+            (std::filesystem::path(OUTPUT_DIR) / target.name).string();
 
         std::string linker_command =
             std::format("{} {} -o {}", compiler, objects_str, bin_path);
