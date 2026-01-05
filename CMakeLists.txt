@@ -9,11 +9,17 @@ project("Forge" CXX)
 
 find_package("OpenSSL" REQUIRED)
 
-set("WASMTIME_C_DIR" ${CMAKE_CURRENT_SOURCE_DIR}/vendor/wasmtime-c-api)
-set("WASMTIME_CPP_DIR" ${CMAKE_CURRENT_SOURCE_DIR}/vendor/wasmtime-cpp)
-find_library("WASMTIME_LIB" wasmtime HINTS "${WASMTIME_C_DIR}/lib")
-
-add_compile_options("-rdynamic")
+set("WASMTIME_C_DIR" ${CMAKE_CURRENT_SOURCE_DIR}/vendor/wasmtime/wasmtime-c-api)
+set("WASMTIME_CPP_DIR" ${CMAKE_CURRENT_SOURCE_DIR}/vendor/wasmtime/wasmtime-cpp)
+if (APPLE)
+    find_library("WASMTIME_LIB" wasmtime HINTS "${WASMTIME_C_DIR}/lib/apple")
+endif()
+if(LINUX)
+    find_library("WASMTIME_LIB" wasmtime HINTS "${WASMTIME_C_DIR}/lib/linux")
+endif()
+if(WIN32)
+    find_library("WASMTIME_LIB" wasmtime HINTS "${WASMTIME_C_DIR}/lib/windows")
+endif()
 
 set("SOURCES"
         "src/main.cpp"
@@ -33,15 +39,37 @@ target_include_directories("forge" PRIVATE
 )
 target_link_libraries("forge" PRIVATE OpenSSL::Crypto ${WASMTIME_LIB})
 
-add_custom_command(TARGET forge POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${WASMTIME_C_DIR}/lib/libwasmtime.dylib"
-    "$<TARGET_FILE_DIR:forge>/libwasmtime.dylib"
-)
 
 if(APPLE)
+    add_custom_command(TARGET forge POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${WASMTIME_C_DIR}/lib/apple/libwasmtime.dylib"
+        "$<TARGET_FILE_DIR:forge>/libwasmtime.dylib"
+    )
     set_target_properties(forge PROPERTIES
         INSTALL_RPATH "@loader_path"
+        BUILD_WITH_INSTALL_RPATH TRUE
+    )
+endif()
+if (LINUX)
+    add_custom_command(TARGET forge POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${WASMTIME_C_DIR}/lib/linux/libwasmtime.so"
+        "$<TARGET_FILE_DIR:forge>/libwasmtime.so"
+    )
+    set_target_properties(forge PROPERTIES
+        INSTALL_RPATH "$ORIGIN"
+        BUILD_WITH_INSTALL_RPATH TRUE
+    )
+endif()
+if(WIN32)
+    add_custom_command(TARGET forge POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${WASMTIME_C_DIR}/lib/windows/wasmtime.dll"
+        "$<TARGET_FILE_DIR:forge>/wasmtime.dll"
+    )
+    set_target_properties( forge PROPERTIES
+        INSTALL_RPATH "$ORIGIN"
         BUILD_WITH_INSTALL_RPATH TRUE
     )
 endif()
