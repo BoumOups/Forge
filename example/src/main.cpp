@@ -2,6 +2,6 @@
 #include <print>
 
 int main() {
-  std::print("Hello from the best of the worth of the worth");
+  std::print("Hello from Forge!\n");
   return EXIT_SUCCESS;
 }

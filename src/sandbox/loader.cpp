@@ -1,3 +1,4 @@
+#include "core/core.h++"
 #include "forge.hpp"
 
 #include <wasmtime.h>
@@ -29,7 +30,7 @@ bool forge::loader::load_and_run_wasm_script(forge::Project &project) {
   wasmtime::Linker linker(engine);
 
   std::filesystem::path wasm_path =
-      std::filesystem::current_path() / "build.wasm";
+      std::filesystem::current_path() / forge::OUTPUT_DIR / "build.wasm";
 
   std::ifstream file(wasm_path, std::ios::binary);
   if (!file.is_open()) {

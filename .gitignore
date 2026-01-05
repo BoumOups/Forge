@@ -1,6 +1,6 @@
 /build
 /bin
-/example/bin
+/example/forge-out
 .vscode
 /.cache
 /.idea
