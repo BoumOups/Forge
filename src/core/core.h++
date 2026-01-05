@@ -7,6 +7,9 @@
 #include <sstream>
 
 namespace forge {
+
+const std::string OUTPUT_DIR = "forge-out";
+
 class Builder {
 public:
   static bool compile_build_script();
@@ -17,8 +20,8 @@ public:
 
 namespace utils {
 inline void ensure_directories() {
-  if (!std::filesystem::exists("bin")) {
-    std::filesystem::create_directory("bin");
+  if (!std::filesystem::exists(OUTPUT_DIR)) {
+    std::filesystem::create_directory(OUTPUT_DIR);
   }
 }
 

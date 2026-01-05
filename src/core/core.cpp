@@ -11,8 +11,6 @@
 #include "sandbox/loader.h++"
 #include "scheduler/executor.hpp"
 
-const std::string OUTPUT_DIR = "forge-out";
-
 bool forge::Builder::compile_build_script() {
   std::filesystem::path clang_path =
       std::filesystem::current_path() / "../vendor/wasi-sdk/bin/clang++";
