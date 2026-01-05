@@ -20,7 +20,7 @@ struct WasmString {
 
 namespace forge {
 
-enum class Compiler { Clang = 0, GCC = 1, CL = 2, MSVC = 3 };
+enum class Compiler { Auto = 0, Clang = 1, GCC = 2, CL = 4 };
 enum class OS { Unknown = 0, OSX = 1, Linux = 2, Windows = 3 };
 
 inline size_t str_len(const char *str) {
@@ -70,7 +70,7 @@ public:
 
 namespace forge {
 
-enum class Compiler { Clang = 0, GCC = 1, CL = 2, MSVC = 3 };
+enum class Compiler { Auto = 0, Clang = 1, GCC = 2, CL = 3 };
 
 struct Target {
   std::string name;
@@ -108,7 +108,7 @@ public:
 
 private:
   std::vector<Target> targets;
-  Compiler compiler = Compiler::Clang;
+  Compiler compiler = Compiler::Auto;
 };
 
 extern "C" {

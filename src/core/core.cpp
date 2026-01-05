@@ -61,6 +61,12 @@ bool forge::Builder::compile_project(Project &project) {
   std::vector<std::string> compile_commands;
   std::vector<std::string> object_file;
 
+  const std::string compiler = forge::utils::get_compiler(project);
+  if (compiler.empty()) {
+    std::print("❌ No suitable compiler found.\n");
+    return false;
+  }
+
   for (auto &target : project.get_targets()) {
     auto manifest = forge::Manifest::load();
     bool need_linking = false;
@@ -74,9 +80,9 @@ bool forge::Builder::compile_project(Project &project) {
       std::string current_hash =
           forge::Hasher::hash_file(src, target.flags_str());
       if (manifest[src] != current_hash) {
-        std::string compile_cmd = std::format(
-            "{} {} -c {} -o {}", forge::utils::get_compiler(project),
-            target.flags_str(), src, object_path.string());
+        std::string compile_cmd =
+            std::format("{} {} -c {} -o {}", compiler, target.flags_str(), src,
+                        object_path.string());
         compile_commands.push_back(compile_cmd);
 
         manifest[src] = current_hash;
@@ -99,8 +105,7 @@ bool forge::Builder::compile_project(Project &project) {
             (std::filesystem::path("bin") / target.name).string();
 
         std::string linker_command =
-            std::format("{} {} -o {}", forge::utils::get_compiler(project),
-                        objects_str, bin_path);
+            std::format("{} {} -o {}", compiler, objects_str, bin_path);
         std::print(" 🔗[LINK] {}\n", target.name);
 
         int result = std::system(linker_command.c_str());

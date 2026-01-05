@@ -45,23 +45,27 @@ inline std::string get_compiler(const Project &project) {
   };
 
   switch (project.get_compiler()) {
-  case Compiler::Clang:
+  case Compiler::Auto:
     if (check("clang++"))
       return "clang++";
-    break;
-  case Compiler::GCC:
     if (check("g++"))
       return "g++";
-    break;
-  case Compiler::CL:
-  case Compiler::MSVC:
     if (check("cl"))
       return "cl";
+    break;
+  case Compiler::Clang:
+    return "clang++";
+    break;
+  case Compiler::GCC:
+    return "g++";
+    break;
+  case Compiler::CL:
+    return "cl";
     break;
   }
 
   std::print("❌ Compiler not found, fallback to clang++\n");
-  return "clang++";
+  return "";
 }
 } // namespace utils
 } // namespace forge
