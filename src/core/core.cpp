@@ -12,8 +12,21 @@
 #include "scheduler/executor.hpp"
 
 bool forge::Builder::compile_build_script() {
+#if defined(_WIN32) || defined(_WIN64)
   std::filesystem::path clang_path =
-      std::filesystem::current_path() / "../vendor/wasi-sdk/bin/clang++";
+      std::filesystem::current_path() /
+      "../vendor/wasi-sdk/wasi-sdk-29.0-x86_64-windows/bin/clang++";
+#endif
+#if defined(__linux__)
+  std::filesystem::path clang_path =
+      std::filesystem::current_path() /
+      "../vendor/wasi-sdk/wasi-sdk-29.0-x86_64-linux/bin/clang++";
+#endif
+#if defined(__APPLE__)
+  std::filesystem::path clang_path =
+      std::filesystem::current_path() /
+      "../vendor/wasi-sdk/wasi-sdk-29.0-ARM64-apple/bin/clang++";
+#endif
 
   std::filesystem::path script_path =
       std::filesystem::current_path() / "build.cpp";
