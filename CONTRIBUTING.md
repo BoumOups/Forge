@@ -1,10 +1,10 @@
 # Contributing to Forge
 
-First off, thank you for helping us build Forge! We are excited to create a C++ build system that feels as native and powerful as Zig's build system, but for the C++ ecosystem.
+First off, thank you for helping us build Forge! I are excited to create a C++ build system that feels as native and powerful as Zig's build system, but for the C++ ecosystem.
 
 ## 🍎 Current Platform Support
 
-> **Note:** At this stage, Forge is currently only supported on **macOS (Apple Silicon/ARM64)**. Contributions to improve portability to Linux or Windows are welcome, but please ensure changes do not break the existing ARM64 build.
+> **Note:** Currently Forge can be used on AppleARM64, Linuxx86_64 and Windowsx86_64, so the major platforms or supported and with futur version the Windows ARM version will be supported too.
 
 ## 📜 License
 
@@ -14,16 +14,16 @@ By contributing to Forge, you agree that your contributions will be licensed und
 
 ### 1. Bug Reports
 
-Since we are in early development, bugs are expected. Please open an issue with:
+Since I are in early development, bugs are expected. Please open an issue with:
 
-- Your macOS version.
-- Your compiler version (`clang --version`).
+- Your OS.
+- Your compiler version (ex: `clang --version`).
 - How to reproduce the bug.
 - Plus provide any valuable informations
 
 ### 2. Feature Ideas
 
-Want to add support for a specific package manager or compiler flag abstraction? Open an issue to discuss the design. We aim for a "C++-first" approach where the build logic is as readable as the source code.
+Want to add support for a specific package manager or compiler flag abstraction? Open an issue to discuss the design. I aim for a "C++-first" approach where the build logic is as readable as the source code.
 
 ### 3. Pull Requests
 
@@ -33,11 +33,11 @@ Want to add support for a specific package manager or compiler flag abstraction?
    - Follow the project's existing indentation and naming style.
    - Run `clang-format` if a configuration file is provided.
 3. **Keep it Lightweight:** Forge aims to be fast with minimal dependencies. Avoid adding external libraries.
-4. **Test:** Ensure your changes build and run correctly on macOS ARM64.
+4. **Test:** Ensure your changes build and run correctly on your OS and also the others supported platforms.
 
 ## 🛠️ Getting Started (Local Setup)
 
-  Since Forge is a build system for C++, you will need `clang` (via Xcode Command Line Tools) installed.
+  Since Forge is a build system for C++, you will need a C++23 compiler installed and CMake to build the project.
 
   1. **Clone the repository:**
 
