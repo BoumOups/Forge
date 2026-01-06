@@ -37,7 +37,7 @@ target_include_directories("forge" PRIVATE
         "${WASMTIME_C_DIR}/include"
         "${WASMTIME_CPP_DIR}/include"
 )
-target_link_libraries("forge" PRIVATE OpenSSL::Crypto ${WASMTIME_LIB})
+target_link_libraries("forge" PRIVATE ${WASMTIME_LIB})
 
 
 if(APPLE)
