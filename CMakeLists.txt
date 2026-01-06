@@ -7,8 +7,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project("Forge" CXX)
 
-find_package("OpenSSL" REQUIRED)
-
 set("WASMTIME_C_DIR" ${CMAKE_CURRENT_SOURCE_DIR}/vendor/wasmtime/wasmtime-c-api)
 set("WASMTIME_CPP_DIR" ${CMAKE_CURRENT_SOURCE_DIR}/vendor/wasmtime/wasmtime-cpp)
 if (APPLE)

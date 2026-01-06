@@ -8,7 +8,6 @@
 #include <string>
 
 #include <a5hash/a5hash.h>
-// #include <openssl/sha.h>
 
 namespace forge {
 class Hasher {
@@ -23,7 +22,6 @@ public:
     buffer << file.rdbuf() << extra_data;
     std::string content = buffer.str();
 
-    // unsigned char hash[20];
     uint64_t hash = a5hash_impl::a5hash(
         reinterpret_cast<const unsigned char *>(content.c_str()),
         content.length(), 0);
