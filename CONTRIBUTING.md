@@ -16,8 +16,9 @@ By contributing to Forge, you agree that your contributions will be licensed und
 
 Since I are in early development, bugs are expected. Please open an issue with:
 
-- Your OS.
-- Your compiler version (ex: `clang --version`).
+- Your OS [e.g. : MacOS ARM64]
+- Your OS version [e.g : Macos Taohe]
+- Your compiler version [e.g. : `clang --version`].
 - How to reproduce the bug.
 - Plus provide any valuable informations
 

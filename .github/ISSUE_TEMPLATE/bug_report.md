@@ -19,7 +19,7 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 **Environment (please complete the following information):**
-- OS: macOS (ARM64)
+- OS: [e.g. MacOS ARM64]
 - OS Version: [e.g. 14.2 Sonoma]
 - Compiler: [e.g. Apple Clang 15.0.0]
 - Forge Version: [e.g. 0.1.2]
