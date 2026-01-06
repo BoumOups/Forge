@@ -8,7 +8,7 @@
 
 namespace forge {
 
-const std::string OUTPUT_DIR = "forge-out";
+const std::string_view OUTPUT_DIR = "forge-out";
 
 class Builder {
 public:

@@ -144,7 +144,9 @@ bool forge::Builder::build_project() {
     return false;
   }
 
-  if (!forge::loader::load_and_run_wasm_script(project)) {
+  std::filesystem::path wasm_path =
+      std::filesystem::current_path() / forge::OUTPUT_DIR / "build.wasm";
+  if (!forge::loader::load_and_run_wasm_script(project, wasm_path.string())) {
     std::print("❌ Failed at loading and running wasm script !\n");
     return false;
   }

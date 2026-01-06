@@ -1,4 +1,3 @@
-#include "core/core.h++"
 #include "forge.hpp"
 
 #include <wasmtime.h>
@@ -12,29 +11,15 @@
 
 #include "sandbox/loader.h++"
 
-std::vector<uint8_t> read_file(const std::string &path) {
-  std::ifstream file(path, std::ios::binary | std::ios::ate);
-  std::streamsize size = file.tellg();
-
-  file.seekg(0, std::ios::beg);
-
-  std::vector<uint8_t> buffer(size);
-  file.read(reinterpret_cast<char *>(buffer.data()), size);
-
-  return buffer;
-}
-
-bool forge::loader::load_and_run_wasm_script(forge::Project &project) {
+bool forge::loader::load_and_run_wasm_script(forge::Project &project,
+                                             const std::string &wasm_path) {
   wasmtime::Engine engine;
   wasmtime::Store store(engine);
   wasmtime::Linker linker(engine);
 
-  std::filesystem::path wasm_path =
-      std::filesystem::current_path() / forge::OUTPUT_DIR / "build.wasm";
-
   std::ifstream file(wasm_path, std::ios::binary);
   if (!file.is_open()) {
-    std::print("❌ Error: Could not open {}\n", wasm_path.string());
+    std::print("❌ Error: Could not open {}\n", wasm_path);
     return false;
   }
 
