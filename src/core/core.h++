@@ -7,10 +7,9 @@
 #include <sstream>
 
 #include "cli/log.h++"
+#include "core/paths.h++"
 
 namespace forge {
-
-const std::string_view OUTPUT_DIR = "forge-out";
 
 class Builder {
 public:
@@ -22,8 +21,8 @@ public:
 
 namespace utils {
 inline void ensure_directories() {
-  if (!std::filesystem::exists(OUTPUT_DIR)) {
-    std::filesystem::create_directory(OUTPUT_DIR);
+  if (!std::filesystem::exists(forge::Path::get_output_directory_path())) {
+    std::filesystem::create_directory(forge::Path::get_output_directory_path());
   }
 }
 

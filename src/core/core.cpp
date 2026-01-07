@@ -9,31 +9,18 @@
 #include "cache/hasher.hpp"
 #include "cache/manifest.hpp"
 #include "cli/log.h++"
+#include "core/paths.h++"
 #include "forge.hpp"
 #include "sandbox/loader.h++"
 #include "scheduler/executor.hpp"
 
 bool forge::Builder::compile_build_script() {
-#if defined(_WIN32) || defined(_WIN64)
-  std::filesystem::path clang_path =
-      std::filesystem::current_path() /
-      "../vendor/wasi-sdk/wasi-sdk-29.0-x86_64-windows/bin/clang++";
-#endif
-#if defined(__linux__)
-  std::filesystem::path clang_path =
-      std::filesystem::current_path() /
-      "../vendor/wasi-sdk/wasi-sdk-29.0-x86_64-linux/bin/clang++";
-#endif
-#if defined(__APPLE__)
-  std::filesystem::path clang_path =
-      std::filesystem::current_path() /
-      "../vendor/wasi-sdk/wasi-sdk-29.0-ARM64-apple/bin/clang++";
-#endif
+  std::filesystem::path clang_path = forge::Path::get_wasm_compiler_path();
 
   std::filesystem::path script_path =
       std::filesystem::current_path() / "build.cpp";
   std::filesystem::path output_path =
-      std::filesystem::current_path() / OUTPUT_DIR / "build.wasm";
+      forge::Path::get_output_directory_path() / "build.wasm";
 
   if (!std::filesystem::exists(script_path)) {
     forge::message::log(
@@ -81,6 +68,9 @@ bool forge::Builder::compile_project(Project &project) {
   std::vector<std::string> compile_commands;
   std::vector<std::string> object_file;
 
+  const std::string OUTPUT_DIR =
+      forge::Path::get_output_directory_path().string();
+
   const std::string compiler = forge::utils::get_compiler(project);
   if (compiler.empty()) {
     forge::message::log(forge::message::Level::Error,
@@ -95,8 +85,7 @@ bool forge::Builder::compile_project(Project &project) {
     for (auto &src : target.sources) {
       std::filesystem::path src_path(src);
       std::filesystem::path object_path(
-          std::filesystem::path(OUTPUT_DIR) /
-          src_path.filename().replace_extension(".o"));
+          OUTPUT_DIR / src_path.filename().replace_extension(".o"));
 
       std::string current_hash =
           forge::Hasher::hash_file(src, target.flags_str());
@@ -150,6 +139,8 @@ bool forge::Builder::compile_project(Project &project) {
 
 bool forge::Builder::build_project() {
   forge::utils::ensure_directories();
+  const std::filesystem::path OUTPUT_DIR =
+      forge::Path::get_output_directory_path();
 
   forge::Project project;
 
@@ -160,7 +151,7 @@ bool forge::Builder::build_project() {
   }
 
   std::filesystem::path wasm_path =
-      std::filesystem::current_path() / forge::OUTPUT_DIR / "build.wasm";
+      std::filesystem::current_path() / OUTPUT_DIR / "build.wasm";
   if (!forge::loader::load_and_run_wasm_script(project, wasm_path.string())) {
     forge::message::log(forge::message::Level::Error,
                         "Failed at loading and running wasm script !");

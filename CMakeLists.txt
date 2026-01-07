@@ -24,6 +24,7 @@ set("SOURCES"
         "src/sandbox/loader.cpp"
         "src/cli/interface.cpp"
         "src/core/core.cpp"
+        "src/core/paths.cpp"
 )
 
 add_executable("forge" ${SOURCES})
