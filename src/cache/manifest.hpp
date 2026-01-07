@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../vendor/json/json.hpp"
+#include "json.hpp"
 #include <fstream>
 
 namespace forge {

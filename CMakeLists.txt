@@ -32,6 +32,7 @@ target_include_directories("forge" PRIVATE
         "include"
         "src"
         "vendor"
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/json"
         "${WASMTIME_C_DIR}/include"
         "${WASMTIME_CPP_DIR}/include"
 )
