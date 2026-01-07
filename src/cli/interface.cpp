@@ -3,33 +3,37 @@
 #include <print>
 #include <string_view>
 
+#include "cli/log.h++"
 #include "core/core.h++"
 
-void forge::Interface::parse_command(const char* command) {
+void forge::Interface::parse_command(const char *command) {
   std::string_view cmd(command);
   if (cmd == "build") {
     forge::Interface::run_command({Command::Type::Build});
-  }else if (cmd == "run") {
+  } else if (cmd == "run") {
     forge::Interface::run_command({Command::Type::Run});
-  }else if (cmd == "clean") {
+  } else if (cmd == "clean") {
     forge::Interface::run_command({Command::Type::Clean});
-  }else {
-    std::println("Command not found: {}", command);
+  } else {
+    forge::message::log(forge::message::Level::Error,
+                        std::format("Unknown command '{}'", command));
     print_help();
   }
 }
 
-void forge::Interface::run_command(const Command& command) {
+void forge::Interface::run_command(const Command &command) {
   switch (command.type) {
-    case Command::Type::Build:
-      forge::Builder::build_project();
-      break;
-    case Command::Type::Run:
-      std::println("Run command not implemented yet.");
-      break;
-    case Command::Type::Clean:
-      std::println("Clean command not implemented yet.");
-      break;
+  case Command::Type::Build:
+    forge::Builder::build_project();
+    break;
+  case Command::Type::Run:
+    forge::message::log(forge::message::Level::Info,
+                        "Run command executed (placeholder).");
+    break;
+  case Command::Type::Clean:
+    forge::message::log(forge::message::Level::Info,
+                        "Clean command executed (placeholder).");
+    break;
   }
 }
 
