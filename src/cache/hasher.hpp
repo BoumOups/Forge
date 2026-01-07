@@ -28,7 +28,6 @@ public:
 
     std::stringstream ss;
     ss << std::hex << std::setw(2) << std::setfill('0') << hash;
-    std::print("Computed hash for file {}: {}\n", path, ss.str());
 
     return ss.str();
   }
