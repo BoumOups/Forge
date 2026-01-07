@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include "cli/log.h++"
 #include "sandbox/loader.h++"
 
 bool forge::loader::load_and_run_wasm_script(forge::Project &project,
@@ -19,7 +20,8 @@ bool forge::loader::load_and_run_wasm_script(forge::Project &project,
 
   std::ifstream file(wasm_path, std::ios::binary);
   if (!file.is_open()) {
-    std::print("❌ Error: Could not open {}\n", wasm_path);
+    forge::message::log(forge::message::Level::Error,
+                        std::format("Could not open {}", wasm_path));
     return false;
   }
 
@@ -28,8 +30,9 @@ bool forge::loader::load_and_run_wasm_script(forge::Project &project,
   auto module_result = wasmtime::Module::compile(engine, wasm_bytes);
 
   if (!module_result) {
-    std::print("❌ Failed to compile Wasm: {}\n",
-               module_result.err().message());
+    forge::message::log(forge::message::Level::Error,
+                        std::format("Failed to compile Wasm: {}",
+                                    module_result.err().message()));
     return false;
   }
   auto module = module_result.ok();
@@ -68,7 +71,9 @@ bool forge::loader::load_and_run_wasm_script(forge::Project &project,
                    }
 
                    project.add_executable(exe_name, sources);
-                   std::print("🛡️ [Sandbox] Registered: {}\n", exe_name);
+                   forge::message::log(
+                       forge::message::Level::Info,
+                       std::format("Registered executable: {}", exe_name));
                  })
       .unwrap();
 
@@ -96,8 +101,9 @@ bool forge::loader::load_and_run_wasm_script(forge::Project &project,
 
   auto instance_result = linker.instantiate(store, module);
   if (!instance_result) {
-    std::print("❌ Instantiation failed: {}\n",
-               instance_result.err().message());
+    forge::message::log(forge::message::Level::Error,
+                        std::format("Failed to instantiate Wasm: {}",
+                                    instance_result.err().message()));
     return false;
   }
   auto instance = instance_result.ok();
@@ -108,7 +114,8 @@ bool forge::loader::load_and_run_wasm_script(forge::Project &project,
     auto start_result = start_func.call(store, {});
     if (!start_result) {
       auto err = start_result.err();
-      std::print("❌ Wasm Runtime Error: {}\n", err.message());
+      forge::message::log(forge::message::Level::Error,
+                          std::format("Wasm Runtime: {}", err.message()));
 
       return false;
     }
