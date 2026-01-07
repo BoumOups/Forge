@@ -20,12 +20,6 @@ public:
 };
 
 namespace utils {
-inline void ensure_directories() {
-  if (!std::filesystem::exists(forge::Path::get_output_directory_path())) {
-    std::filesystem::create_directory(forge::Path::get_output_directory_path());
-  }
-}
-
 inline std::string join_objects(const std::vector<std::string> &objects) {
   std::ostringstream oss;
   for (size_t i = 0; i < objects.size(); i++) {

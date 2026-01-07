@@ -138,7 +138,6 @@ bool forge::Builder::compile_project(Project &project) {
 }
 
 bool forge::Builder::build_project() {
-  forge::utils::ensure_directories();
   const std::filesystem::path OUTPUT_DIR =
       forge::Path::get_output_directory_path();
 
