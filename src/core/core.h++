@@ -6,6 +6,8 @@
 #include <print>
 #include <sstream>
 
+#include "cli/log.h++"
+
 namespace forge {
 
 const std::string_view OUTPUT_DIR = "forge-out";
@@ -67,7 +69,7 @@ inline std::string get_compiler(const Project &project) {
     break;
   }
 
-  std::print("❌ Compiler not found, fallback to clang++\n");
+  forge::message::log(message::Level::Error, "Compiler not found...");
   return "";
 }
 } // namespace utils
