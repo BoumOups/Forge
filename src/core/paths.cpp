@@ -34,7 +34,7 @@ std::filesystem::path Path::get_build_script_path() {
 }
 
 std::filesystem::path Path::get_wasm_compiler_path() {
-  std::filesystem::path clang_path = VENDOR_BASE_PATH.data() +
+  std::filesystem::path clang_path = WASI_BASE_PATH.data() +
                                      std::string(get_platform_suffix()) +
                                      "/bin/clang++";
   return clang_path;

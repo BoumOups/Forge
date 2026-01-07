@@ -17,10 +17,13 @@
 bool forge::Builder::compile_build_script() {
   std::filesystem::path clang_path = forge::Path::get_wasm_compiler_path();
 
+  const std::string_view SCRIPT_NAME = "build.cpp";
+
   std::filesystem::path script_path =
-      std::filesystem::current_path() / "build.cpp";
+      std::filesystem::current_path() / SCRIPT_NAME;
   std::filesystem::path output_path =
-      forge::Path::get_output_directory_path() / "build.wasm";
+      forge::Path::get_output_directory_path() /
+      std::filesystem::path(SCRIPT_NAME).replace_extension(".wasm");
 
   if (!std::filesystem::exists(script_path)) {
     forge::message::log(

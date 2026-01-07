@@ -2,12 +2,10 @@
 
 #include "forge.hpp"
 
-#include <filesystem>
 #include <print>
 #include <sstream>
 
 #include "cli/log.h++"
-#include "core/paths.h++"
 
 namespace forge {
 

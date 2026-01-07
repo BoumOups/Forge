@@ -5,7 +5,7 @@ namespace forge {
 
 class Path {
 private:
-  static constexpr std::string_view VENDOR_BASE_PATH = "../vendor/wasi-sdk/";
+  static constexpr std::string_view WASI_BASE_PATH = "../vendor/wasi-sdk/";
 
 private:
   static bool ensure_directory_exists(const std::filesystem::path &path);
