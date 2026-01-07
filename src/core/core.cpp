@@ -140,7 +140,6 @@ bool forge::Builder::compile_project(Project &project) {
           return false;
         }
       } else {
-        std::print("✨ Project is up to date.\n");
         forge::message::log(forge::message::Level::Info,
                             "Project is up to date.");
       }
