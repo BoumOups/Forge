@@ -38,7 +38,7 @@ void forge::Interface::run_command(const Command &command) {
 }
 
 void forge::Interface::print_help() {
-  std::print("Forge V0.0.1 - Modern C++ Build System\n");
+  std::print("Forge V0.0.3 - Modern C++ Build System\n");
   std::print("Usage: forge <command> [options]\n\n");
   std::print("Commands:\n");
   std::print("  build   Compile the current project\n");
