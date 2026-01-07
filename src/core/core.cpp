@@ -1,12 +1,14 @@
 #include "core.h++"
 
 #include <filesystem>
+#include <format>
 #include <print>
 #include <set>
 #include <string>
 
 #include "cache/hasher.hpp"
 #include "cache/manifest.hpp"
+#include "cli/log.h++"
 #include "forge.hpp"
 #include "sandbox/loader.h++"
 #include "scheduler/executor.hpp"
@@ -34,8 +36,9 @@ bool forge::Builder::compile_build_script() {
       std::filesystem::current_path() / OUTPUT_DIR / "build.wasm";
 
   if (!std::filesystem::exists(script_path)) {
-    std::print("❌ Error: No 'build.cpp' found in {}\n",
-               std::filesystem::current_path().string());
+    forge::message::log(
+        forge::message::Level::Error,
+        std::format("No 'build.cpp' found in {}", script_path.string()));
     return false;
   }
 
@@ -46,7 +49,8 @@ bool forge::Builder::compile_build_script() {
                                 "{} -o {}",
                                 clang_path.string(), script_path.string(),
                                 output_path.string());
-  std::print("[CMD] {}\n", cmd);
+  forge::message::log(forge::message::Level::Info,
+                      std::format("Compiling build script: {}", cmd));
 
   int result = std::system(cmd.c_str());
   return result == 0;
@@ -55,14 +59,17 @@ bool forge::Builder::compile_build_script() {
 bool forge::Builder::graph_validation(const Project &project) {
   const auto &targets = project.get_targets();
   if (targets.empty()) {
-    std::print("❌ No targets found.\n");
+    forge::message::log(forge::message::Level::Error,
+                        "No targets defined in the project.");
     return false;
   }
 
   std::set<std::string> target_names;
   for (const auto &target : targets) {
     if (target_names.contains(target.name)) {
-      std::print("❌ Duplicate target name: {}\n", target.name);
+      forge::message::log(
+          forge::message::Level::Error,
+          std::format("Duplicate target name found: {}", target.name));
       return false;
     }
     target_names.insert(target.name);
@@ -76,7 +83,8 @@ bool forge::Builder::compile_project(Project &project) {
 
   const std::string compiler = forge::utils::get_compiler(project);
   if (compiler.empty()) {
-    std::print("❌ No suitable compiler found.\n");
+    forge::message::log(forge::message::Level::Error,
+                        "No suitable compiler found.");
     return false;
   }
 
@@ -101,12 +109,14 @@ bool forge::Builder::compile_project(Project &project) {
         manifest[src] = current_hash;
         need_linking = true;
       } else {
-        std::print("  ⏭️  Skipping {} (No changes)\n", src);
+        forge::message::log(forge::message::Level::Info,
+                            std::format("Skipping {} (No changes)", src));
       }
       object_file.push_back(object_path.string());
 
       if (!forge::Executor::execute_parallel(compile_commands)) {
-        std::print("❌ Compilation failed.\n");
+        forge::message::log(forge::message::Level::Error,
+                            "Compilation process encountered errors.");
         return false;
       }
 
@@ -119,15 +129,20 @@ bool forge::Builder::compile_project(Project &project) {
 
         std::string linker_command =
             std::format("{} {} -o {}", compiler, objects_str, bin_path);
-        std::print(" 🔗[LINK] {}\n", target.name);
+        forge::message::log(forge::message::Level::Info,
+                            std::format("Linking command: {}", linker_command));
 
         int result = std::system(linker_command.c_str());
         if (result != 0) {
-          std::print("❌ Linking failed for {}\n", target.name);
+          forge::message::log(
+              forge::message::Level::Error,
+              std::format("Linking failed for {}", target.name));
           return false;
         }
       } else {
         std::print("✨ Project is up to date.\n");
+        forge::message::log(forge::message::Level::Info,
+                            "Project is up to date.");
       }
     }
   }
@@ -140,24 +155,28 @@ bool forge::Builder::build_project() {
   forge::Project project;
 
   if (!compile_build_script()) {
-    std::print("❌ Failed at compiling build script !\n");
+    forge::message::log(forge::message::Level::Error,
+                        "Failed at compiling build script !");
     return false;
   }
 
   std::filesystem::path wasm_path =
       std::filesystem::current_path() / forge::OUTPUT_DIR / "build.wasm";
   if (!forge::loader::load_and_run_wasm_script(project, wasm_path.string())) {
-    std::print("❌ Failed at loading and running wasm script !\n");
+    forge::message::log(forge::message::Level::Error,
+                        "Failed at loading and running wasm script !");
     return false;
   }
 
   if (!graph_validation(project)) {
-    std::print("❌ Graph validation failed !\n");
+    forge::message::log(forge::message::Level::Error,
+                        "Graph validation failed !");
     return false;
   }
 
   if (!compile_project(project)) {
-    std::println("Failed at compiling project !");
+    forge::message::log(forge::message::Level::Error,
+                        "Failed at compiling project !");
     return false;
   }
 
