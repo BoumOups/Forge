@@ -44,7 +44,7 @@ if(LINUX)
     target_link_libraries("forge" PRIVATE ${WASMTIME_LIB})
 endif()
 if(WIN32)
-    target_link_libraries("forge", PRIVATE ${WASMTIME_LIB} "-lstdc++exp")
+    target_link_libraries("forge" PRIVATE ${WASMTIME_LIB} "-lstdc++exp")
 endif()
 
 
