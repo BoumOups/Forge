@@ -38,6 +38,9 @@ target_include_directories("forge" PRIVATE
         "${WASMTIME_CPP_DIR}/include"
 )
 target_link_libraries("forge" PRIVATE ${WASMTIME_LIB})
+if(WIN32)
+    target_link_libraries("forge", PRIVATE "-lstdc++exp")
+endif()
 
 
 if(APPLE)
