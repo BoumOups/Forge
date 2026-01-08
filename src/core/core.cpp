@@ -161,9 +161,9 @@ bool forge::Builder::run_project(Project &project) {
 bool forge::Builder::clean_project() {
   const std::string OUTPUT_DIR =
       forge::Path::get_output_directory_path().string();
-  const std::string clean_command = std::format("rm -rf {}", OUTPUT_DIR);
+  std::string clean_command = std::format("rm -rf {}", OUTPUT_DIR);
 #if defined(_WIN32) || defined(WIN64_)
-  clean_command = std::format("rmdir {}", OUTPUT_DIR);
+  clean_command = std::format("rmdir s /q {}", OUTPUT_DIR);
 #endif
 
   return std::system(clean_command.c_str()) == 0;
