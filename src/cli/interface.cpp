@@ -27,8 +27,7 @@ void forge::Interface::run_command(const Command &command) {
     forge::Builder::build_project();
     break;
   case Command::Type::Run:
-    forge::message::log(forge::message::Level::Info,
-                        "Run command executed (placeholder).");
+    forge::Builder::build_project(true);
     break;
   case Command::Type::Clean:
     forge::message::log(forge::message::Level::Info,

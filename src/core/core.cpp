@@ -1,5 +1,6 @@
 #include "core.h++"
 
+#include <cstdlib>
 #include <filesystem>
 #include <format>
 #include <print>
@@ -140,7 +141,24 @@ bool forge::Builder::compile_project(Project &project) {
   return true;
 }
 
-bool forge::Builder::build_project() {
+bool forge::Builder::run_project(Project &project) {
+  const std::string OUTPUT_DIR =
+      forge::Path::get_output_directory_path().string();
+
+  const std::string EXE_NAME = project.get_targets().front().name;
+
+  std::string file_extension = "";
+#if defined(_WIN32) || defined(WIN64_)
+  file_extension = ".exe";
+#endif
+
+  const std::string run_command =
+      std::format("{}/{}{}", OUTPUT_DIR, EXE_NAME, file_extension);
+
+  return std::system(run_command.c_str()) == 0;
+}
+
+bool forge::Builder::build_project(bool auto_execute) {
   const std::filesystem::path OUTPUT_DIR =
       forge::Path::get_output_directory_path();
 
@@ -170,6 +188,13 @@ bool forge::Builder::build_project() {
     forge::message::log(forge::message::Level::Error,
                         "Failed at compiling project !");
     return false;
+  }
+
+  if (auto_execute == true) {
+    if (!run_project(project)) {
+      forge::message::log(forge::message::Level::Error,
+                          "Failed at running project !");
+    }
   }
 
   return true;

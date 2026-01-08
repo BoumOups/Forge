@@ -14,7 +14,8 @@ public:
   static bool compile_build_script();
   static bool graph_validation(const Project &);
   static bool compile_project(Project &);
-  static bool build_project();
+  static bool run_project(Project &project);
+  static bool build_project(bool auto_execute = false);
 };
 
 namespace utils {
