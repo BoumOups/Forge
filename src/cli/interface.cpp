@@ -30,8 +30,7 @@ void forge::Interface::run_command(const Command &command) {
     forge::Builder::build_project(true);
     break;
   case Command::Type::Clean:
-    forge::message::log(forge::message::Level::Info,
-                        "Clean command executed (placeholder).");
+    forge::Builder::clean_project();
     break;
   }
 }

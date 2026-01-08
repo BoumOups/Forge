@@ -158,6 +158,16 @@ bool forge::Builder::run_project(Project &project) {
   return std::system(run_command.c_str()) == 0;
 }
 
+bool forge::Builder::clean_project() {
+  const std::string OUTPUT_DIR = forge::Path::get_output_directory_path();
+  const std::string clean_command = std::format("rm -rf {}", OUTPUT_DIR);
+#if defined(_WIN32) || defined(WIN64_)
+  clean_command = std::format("rmdir {}", OUTPUT_DIR);
+#endif
+
+  return std::system(clean_command.c_str()) == 0;
+}
+
 bool forge::Builder::build_project(bool auto_execute) {
   const std::filesystem::path OUTPUT_DIR =
       forge::Path::get_output_directory_path();

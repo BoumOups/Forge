@@ -15,6 +15,7 @@ public:
   static bool graph_validation(const Project &);
   static bool compile_project(Project &);
   static bool run_project(Project &project);
+  static bool clean_project();
   static bool build_project(bool auto_execute = false);
 };
 
