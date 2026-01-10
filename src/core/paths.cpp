@@ -1,8 +1,6 @@
 #include "core/paths.h++"
-#include "cli/log.h++"
 
 #include <filesystem>
-#include <format>
 #include <print>
 #include <string_view>
 
