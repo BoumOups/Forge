@@ -2,6 +2,7 @@
 
 #include "forge.hpp"
 
+#include <cstdlib>
 #include <print>
 #include <sstream>
 
@@ -32,15 +33,19 @@ inline std::string join_objects(const std::vector<std::string> &objects) {
 inline std::string get_compiler(const Project &project) {
   auto check = [](const char *compiler) {
 #ifdef _WIN32
-    const char *null_dev = "NUL";
-    const char *command = "where";
+    std::string command =
+        std::format("where {} 2>NUL", command, null_dev, compiler);
+    FILE *pipe = _popen(command.c_str(), "r");
+    if (pipe == nullptr) {
+      return false;
+    }
+    int exit_code = _pclose(pipe);
+    return exit_code == 0;
 #else
-    const char *null_dev = "/dev/null";
-    const char *command = "command -v";
-#endif
     std::string full_command =
-        std::format("{} {} > {} 2>&1", command, compiler, null_dev);
+        std::format("command -v {} > /dev/null 2>&1", compiler);
     return std::system(full_command.c_str()) == 0;
+#endif
   };
 
   switch (project.get_compiler()) {
