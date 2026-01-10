@@ -33,8 +33,7 @@ inline std::string join_objects(const std::vector<std::string> &objects) {
 inline std::string get_compiler(const Project &project) {
   auto check = [](const char *compiler) {
 #ifdef _WIN32
-    std::string command =
-        std::format("where {} 2>NUL", command, null_dev, compiler);
+    std::string command = std::format("where {} 2>NUL", command);
     FILE *pipe = _popen(command.c_str(), "r");
     if (pipe == nullptr) {
       return false;
