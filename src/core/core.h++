@@ -36,7 +36,7 @@ inline std::string get_compiler(const Project &project) {
     const char *command = "where";
 #else
     const char *null_dev = "/dev/null";
-    const char *command = "which";
+    const char *command = "command -v";
 #endif
     std::string full_command =
         std::format("{} {} > {} 2>&1", command, compiler, null_dev);
