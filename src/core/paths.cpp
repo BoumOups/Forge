@@ -81,4 +81,9 @@ std::filesystem::path Path::get_wasm_compiler_path() {
       std::string(get_platform_suffix()) / "bin/clang++";
   return std::filesystem::absolute(clang_path);
 }
+
+std::filesystem::path Path::get_forge_include_directory_path() {
+  std::filesystem::path include_path = get_forge_path() / "include";
+  return include_path;
+}
 } // namespace forge

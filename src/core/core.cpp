@@ -17,6 +17,8 @@
 
 bool forge::Builder::compile_build_script() {
   std::filesystem::path clang_path = forge::Path::get_wasm_compiler_path();
+  std::filesystem::path forge_include_path =
+      forge::Path::get_forge_include_directory_path();
 
   const std::string_view SCRIPT_NAME = "build.cpp";
 
@@ -33,13 +35,14 @@ bool forge::Builder::compile_build_script() {
     return false;
   }
 
-  std::string cmd = std::format("{} --target=wasm32-wasi "
-                                "-O3 -nostdlib "
-                                "-I./include "
-                                "-Wl,--export-all -Wl,--allow-undefined "
-                                "{} -o {}",
-                                clang_path.string(), script_path.string(),
-                                output_path.string());
+  std::string cmd =
+      std::format("{} --target=wasm32-wasi "
+                  "-O3 -nostdlib "
+                  "-I{} "
+                  "-Wl,--export-all -Wl,--allow-undefined "
+                  "{} -o {}",
+                  clang_path.string(), forge_include_path.string(),
+                  script_path.string(), output_path.string());
   forge::message::log(forge::message::Level::Info,
                       std::format("Compiling build script: {}", cmd));
 
