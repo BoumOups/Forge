@@ -41,8 +41,8 @@ inline std::string get_compiler(const Project &project) {
     int exit_code = _pclose(pipe);
 
     forge::message::log(forge::message::Level::Info,
-                        "Ran command: {}, whith exit code of {}..", command,
-                        exit_code);
+                        std::format("Ran command: {}, whith exit code of {}..",
+                                    command, exit_code));
     return exit_code == 0;
 #else
     std::string full_command =
