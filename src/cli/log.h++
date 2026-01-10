@@ -16,6 +16,9 @@ inline void log(Level level, const std::string &msg) {
     std::println("[ERROR] {}", msg);
     break;
   }
+#if defined(_WIN32)
+  std::fflush(stdout);
+#endif
 }
 } // namespace message
 } // namespace forge
