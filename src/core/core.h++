@@ -30,25 +30,26 @@ inline std::string join_objects(const std::vector<std::string> &objects) {
 }
 
 inline std::string get_compiler(const Project &project) {
-  auto check = [](const char *cmd) {
+  auto check = [](const char *compiler) {
 #ifdef _WIN32
     const char *null_dev = "NUL";
-    const char *flag = (std::string(cmd) == "cl") ? " /?" : " --version";
+    const char *command = "where";
 #else
     const char *null_dev = "/dev/null";
-    const char *flag = " --version";
+    const char *command = "which";
 #endif
-    std::string command = std::format("{} {} > {} 2>&1", cmd, flag, null_dev);
-    return std::system(command.c_str()) == 0;
+    std::string full_command =
+        std::format("{} {} > {} 2>&1", command, compiler, null_dev);
+    return std::system(full_command.c_str()) == 0;
   };
 
   switch (project.get_compiler()) {
   case Compiler::Auto:
     if (check("clang++"))
       return "clang++";
-    if (check("g++"))
+    else if (check("g++"))
       return "g++";
-    if (check("cl"))
+    else if (check("cl"))
       return "cl";
     break;
   case Compiler::Clang:
