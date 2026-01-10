@@ -1,10 +1,17 @@
 #include "core/paths.h++"
+#include "cli/log.h++"
 
 #include <filesystem>
+#include <format>
+#include <print>
 #include <string_view>
 
 #if defined(_WIN32)
 #include <windows.h>
+#elif defined(__APPLE__)
+#include <limits.h>
+#include <mach-o/dyld.h>
+#include <unistd.h>
 #else
 #include <limits.h>
 #include <unistd.h>
@@ -35,6 +42,19 @@ std::filesystem::path forge::Path::get_forge_path() {
   wchar_t path[MAX_PATH];
   GetModuleFileNameW(NULL, path, MAX_PATH);
   return std::filesystem::path(path).parent_path();
+#elif defined(__APPLE__)
+  char path[PATH_MAX];
+  uint32_t size = sizeof(path);
+  if (_NSGetExecutablePath(path, &size) != 0) {
+    return std::filesystem::current_path();
+  }
+
+  char resolved_path[PATH_MAX];
+  if (realpath(path, resolved_path) != nullptr) {
+    return std::filesystem::path(resolved_path).parent_path();
+  }
+
+  return std::filesystem::path(path).parent_path();
 #else
   char result[PATH_MAX];
   ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
@@ -57,8 +77,11 @@ std::filesystem::path Path::get_build_script_path() {
 }
 
 std::filesystem::path Path::get_wasm_compiler_path() {
+  forge::message::log(forge::message::Level::Info,
+                      std::format("forge path: {}", get_forge_path().string()));
+
   std::filesystem::path clang_path =
-      std::filesystem::path(WASI_BASE_PATH.data()) /
+      get_forge_path() / std::filesystem::path(WASI_BASE_PATH.data()) /
       std::string(get_platform_suffix()) / "bin/clang++";
   return std::filesystem::absolute(clang_path);
 }
