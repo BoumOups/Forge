@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-int main(int argc, const char *argv[]) {
+int main(const int argc, const char *argv[]) {
   if (argc < 2) {
     forge::Interface::print_help();
   }

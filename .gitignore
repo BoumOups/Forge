@@ -1,6 +1,6 @@
 /build
-/bin
+/cmake-build-debug
 /example/forge-out
-.vscode
+/.vscode
 /.cache
 /.idea

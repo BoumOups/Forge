@@ -3,11 +3,11 @@
 #include <print>
 #include <string>
 
-namespace forge {
-namespace message {
+
+namespace forge::message {
 enum class Level { Info, Error };
 
-inline void log(Level level, const std::string &msg) {
+inline void log(const Level level, const std::string &msg) {
   switch (level) {
   case Level::Info:
     std::println("[INFO] {}", msg);
@@ -20,5 +20,4 @@ inline void log(Level level, const std::string &msg) {
   std::fflush(stdout);
 #endif
 }
-} // namespace message
-} // namespace forge
+} // namespace forge::message
