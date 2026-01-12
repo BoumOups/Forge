@@ -79,7 +79,7 @@ struct Target {
   std::vector<std::string> sources;
   std::vector<std::string> flags;
 
-  std::string flags_str() const {
+  [[nodiscard]] std::string flags_str() const {
     std::string str;
     for (const auto &flag : flags) {
       str += flag;
@@ -92,19 +92,19 @@ struct Target {
 
 class Project {
 public:
-  void add_executable(std::string name, std::vector<std::string> sources) {
+  void add_executable(const std::string &name, const std::vector<std::string> &sources) {
     targets.push_back(Target{name, "exe", sources, {"-std=c++23", "-O2"}});
   }
 
   template <typename... Args>
-  void add_executable(std::string name, Args... sources) {
+  void add_executable(const std::string &name, Args... sources) {
     add_executable(name, std::vector<std::string>{std::string(sources)...});
   }
 
-  void set_compiler(Compiler compiler) { this->compiler = compiler; }
+  void set_compiler(const Compiler new_compiler) { this->compiler = new_compiler; }
 
-  const std::vector<Target> &get_targets() const { return targets; }
-  const Compiler &get_compiler() const { return compiler; }
+  [[nodiscard]] const std::vector<Target> &get_targets() const { return targets; }
+  [[nodiscard]] const Compiler &get_compiler() const { return compiler; }
 
 private:
   std::vector<Target> targets;
@@ -112,7 +112,7 @@ private:
 };
 
 extern "C" {
-void build(forge::Project *pkg);
+void build(Project *pkg);
 }
 
 #define FORGE_MAIN()                                                           \
