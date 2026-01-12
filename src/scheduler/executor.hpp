@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdlib>
 #include <future>
 #include <print>
 #include <string>
@@ -14,17 +13,18 @@ public:
   static bool execute_parallel(const std::vector<std::string> &commands) {
     std::vector<std::future<int>> futures;
 
-    for (const auto command : commands) {
+    futures.reserve(commands.size());
+    for (const auto &command : commands) {
       futures.push_back(std::async(std::launch::async, [command] {
-        forge::message::log(forge::message::Level::Info,
+        message::log(message::Level::Info,
                             std::format("Executing command: {}", command));
         return std::system(command.c_str());
       }));
     }
 
     bool success = true;
-    for (auto &futur : futures) {
-      if (futur.get() != 0)
+    for (auto &future : futures) {
+      if (future.get() != 0)
         success = false;
     }
 

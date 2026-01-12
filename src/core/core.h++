@@ -16,7 +16,7 @@ public:
   static bool compile_build_script();
   static bool graph_validation(const Project &);
   static bool compile_project(Project &);
-  static bool run_project(Project &project);
+  static bool run_project(const Project &project);
   static bool clean_project();
   static bool build_project(bool auto_execute = false);
 };
@@ -56,23 +56,20 @@ inline std::string get_compiler(const Project &project) {
   case Compiler::Auto:
     if (check("clang++"))
       return "clang++";
-    else if (check("g++"))
+    if (check("g++"))
       return "g++";
-    else if (check("cl"))
+    if (check("cl"))
       return "cl";
     break;
   case Compiler::Clang:
     return "clang++";
-    break;
   case Compiler::GCC:
     return "g++";
-    break;
   case Compiler::CL:
     return "cl";
-    break;
   }
 
-  forge::message::log(message::Level::Error, "Compiler not found...");
+  message::log(message::Level::Error, "Compiler not found...");
   return "";
 }
 } // namespace utils

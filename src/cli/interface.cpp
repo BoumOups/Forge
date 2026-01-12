@@ -9,13 +9,13 @@
 void forge::Interface::parse_command(const char *command) {
   std::string_view cmd(command);
   if (cmd == "build") {
-    forge::Interface::run_command({Command::Type::Build});
+    run_command({Command::Type::Build});
   } else if (cmd == "run") {
-    forge::Interface::run_command({Command::Type::Run});
+    run_command({Command::Type::Run});
   } else if (cmd == "clean") {
-    forge::Interface::run_command({Command::Type::Clean});
+    run_command({Command::Type::Clean});
   } else {
-    forge::message::log(forge::message::Level::Error,
+    message::log(message::Level::Error,
                         std::format("Unknown command '{}'", command));
     print_help();
   }
@@ -24,13 +24,13 @@ void forge::Interface::parse_command(const char *command) {
 void forge::Interface::run_command(const Command &command) {
   switch (command.type) {
   case Command::Type::Build:
-    forge::Builder::build_project();
+    Builder::build_project();
     break;
   case Command::Type::Run:
-    forge::Builder::build_project(true);
+    Builder::build_project(true);
     break;
   case Command::Type::Clean:
-    forge::Builder::clean_project();
+    Builder::clean_project();
     break;
   }
 }

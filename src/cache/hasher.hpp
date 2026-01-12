@@ -3,7 +3,6 @@
 #include <fstream>
 #include <iomanip>
 #include <ios>
-#include <print>
 #include <sstream>
 #include <string>
 
@@ -22,8 +21,8 @@ public:
     buffer << file.rdbuf() << extra_data;
     std::string content = buffer.str();
 
-    uint64_t hash = a5hash_impl::a5hash(
-        reinterpret_cast<const unsigned char *>(content.c_str()),
+    uint64_t hash = a5hash(
+        content.c_str(),
         content.length(), 0);
 
     std::stringstream ss;

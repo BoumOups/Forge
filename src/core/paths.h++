@@ -10,7 +10,7 @@ private:
 
 private:
   static bool ensure_directory_exists(const std::filesystem::path &path);
-  static const std::string_view get_platform_suffix();
+  static std::string_view get_platform_suffix();
 
   static std::filesystem::path get_forge_path();
 

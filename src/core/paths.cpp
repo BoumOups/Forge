@@ -7,7 +7,6 @@
 #if defined(_WIN32)
 #include <windows.h>
 #elif defined(__APPLE__)
-#include <limits.h>
 #include <mach-o/dyld.h>
 #include <unistd.h>
 #else
@@ -23,7 +22,7 @@ bool Path::ensure_directory_exists(const std::filesystem::path &path) {
   return true;
 }
 
-const std::string_view Path::get_platform_suffix() {
+std::string_view Path::get_platform_suffix() {
 #if defined(_WIN32) || defined(_WIN64)
   return "wasi-sdk-29.0-x86_64-windows";
 #endif
@@ -35,7 +34,7 @@ const std::string_view Path::get_platform_suffix() {
 #endif
 }
 
-std::filesystem::path forge::Path::get_forge_path() {
+std::filesystem::path Path::get_forge_path() {
 #if defined(_WIN32)
   wchar_t path[MAX_PATH];
   GetModuleFileNameW(NULL, path, MAX_PATH);
