@@ -32,7 +32,6 @@ set("SOURCES"
         "src/cli/interface.cpp"
         "src/core/core.cpp"
         "src/core/paths.cpp"
-        include/forge_wasm.hpp
 )
 
 add_executable("forge" ${SOURCES})
