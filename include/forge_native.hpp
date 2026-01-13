@@ -31,11 +31,6 @@ public:
     targets.push_back(Target{name, "exe", sources, flags});
   }
 
-  template <typename... Args>
-  void add_executable(const std::string &name, Args... sources) {
-    add_executable(name, std::vector<std::string>{std::string(sources)...});
-  }
-
   void set_compiler(const Compiler new_compiler) { this->compiler = new_compiler; }
 
   [[nodiscard]] const std::vector<Target> &get_targets() const { return targets; }
