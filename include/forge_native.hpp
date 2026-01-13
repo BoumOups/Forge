@@ -27,8 +27,8 @@ struct Target {
 
 class Project {
 public:
-  void add_executable(const std::string &name, const std::vector<std::string> &sources) {
-    targets.push_back(Target{name, "exe", sources, {"-std=c++23", "-O2"}});
+  void add_executable(const std::string &name, const std::vector<std::string> &sources, const std::vector<std::string> &flags) {
+    targets.push_back(Target{name, "exe", sources, flags});
   }
 
   template <typename... Args>
