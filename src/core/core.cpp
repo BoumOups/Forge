@@ -37,7 +37,7 @@ bool forge::Builder::compile_build_script() {
 
   std::string cmd =
       std::format("{} --target=wasm32-wasi "
-                  "-O3 -nostdlib "
+                  "-O3 -nostdlib -fno-builtin "
                   "-I{} "
                   "-Wl,--export-all -Wl,--allow-undefined "
                   "{} -o {}",
